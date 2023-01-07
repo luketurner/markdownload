@@ -267,6 +267,7 @@ function textReplace(string, article, disallowedChars = null) {
         .replace(new RegExp('{' + key + ':snake}', 'g'), s.replace(/ /g, '_').toLowerCase())
         .replace(new RegExp('{' + key + ':camel}', 'g'), s.replace(/ ./g, (str) => str.trim().toUpperCase()).replace(/^./, (str) => str.toLowerCase()))
         .replace(new RegExp('{' + key + ':pascal}', 'g'), s.replace(/ ./g, (str) => str.trim().toUpperCase()).replace(/^./, (str) => str.toUpperCase()))
+        .replace(new RegExp('{' + key + ':slug}', 'g'), s.replace(/[^\w-_]+/g, '-').toLowerCase());
     }
   }
 
