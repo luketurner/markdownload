@@ -1,3 +1,40 @@
+# luketurner's MarkDownload Fork - Notes on Changes
+
+Currently implemented the following features on top of the base MarkDownload (forked on 2023-01-06), tested for **firefox only** --
+
+1. [add `{id}` variable for per-capture unique IDs](https://github.com/luketurner/markdownload/commit/b0a1ffa80f9a053fdb02a803bc365baa3814c2b5)
+2. [add conditional substitutions in templates](https://github.com/luketurner/markdownload/commit/1f3ad36cf6ba9ccb22aea6410c02d6d193b1f943)
+3. [add `:slug` modifier for template variables](https://github.com/luketurner/markdownload/commit/918b54e6c6c9169fe3c4181614884021c51b9a43)
+
+All features intended to simplify [Dendron](https://www.dendron.so/) compatibility, so I can capture new notes with valid frontmatter without running them through Dendron's doctoring.
+
+I use the following configuration to capture to Dendron:
+
+Template for title/filename: 
+
+```
+ref.bookmark.{hostname:slug}{pathname:?.}{pathname:slug}
+```
+
+Template for frontmatter:
+
+```
+---
+id: {id}
+title: {pageTitle}
+updated: {date:x}
+source_url: {baseURI}
+source_author: {byline}
+source_captured: {date:YYYY-MM-DDTHH:mm:ss} (UTC {date:Z})
+source_keywords: {keywords}
+desc: """
+{excerpt}
+"""
+---
+```
+
+I create a new Dendron vault in `/home/luke/Dendron/bookmarks` and create a link to that directory in `/home/luke/Downloads/`. Then I set the folder inside Downloads to `bookmarks`.
+
 # MarkDownload - Markdown Web Clipper
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/deathau/markdownload?style=for-the-badge&sort=semver)](https://github.com/deathau/markdownload/releases/latest)
