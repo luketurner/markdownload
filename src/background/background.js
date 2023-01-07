@@ -255,6 +255,15 @@ function getImageFilename(src, options, prependFilePath = true) {
   return imagePrefix + filename;
 }
 
+// Regex that matches "conditional" replacements. See options.html for documentation.
+// When a cond regexp is matched, will capture three groups:
+// 1. The key itself.
+// 2. The value to replace with if condition is true.
+// 3. The value to replace with if condition is false.
+function condRegexp(key) {
+  return new RegExp('{(' + key + '):\\?(.*?)(?:!(.*?))?}', 'g');
+}
+
 // function to replace placeholder strings with article info
 function textReplace(string, article, disallowedChars = null) {
   for (const key in article) {
@@ -267,7 +276,8 @@ function textReplace(string, article, disallowedChars = null) {
         .replace(new RegExp('{' + key + ':snake}', 'g'), s.replace(/ /g, '_').toLowerCase())
         .replace(new RegExp('{' + key + ':camel}', 'g'), s.replace(/ ./g, (str) => str.trim().toUpperCase()).replace(/^./, (str) => str.toLowerCase()))
         .replace(new RegExp('{' + key + ':pascal}', 'g'), s.replace(/ ./g, (str) => str.trim().toUpperCase()).replace(/^./, (str) => str.toUpperCase()))
-        .replace(new RegExp('{' + key + ':slug}', 'g'), s.replace(/[^\w-_]+/g, '-').toLowerCase());
+        .replace(new RegExp('{' + key + ':slug}', 'g'), s.replace(/[^\w-_]+/g, '-').toLowerCase())
+        .replace(condRegexp(key), function (_, _, ifYes, ifNo) { return (s ? ifYes : ifNo) || ''; });
     }
   }
 
@@ -297,6 +307,9 @@ function textReplace(string, article, disallowedChars = null) {
       string = string.replace(new RegExp(match.replace(/\\/g, '\\\\'), 'g'), keywordsString);
     })
   }
+
+  // if there are negative conditionals left, replace them with the no-value.
+  string = string.replace(condRegexp('.*?'), function (_, _, _, ifNo) { return ifNo || ''; });
 
   // replace anything left in curly braces
   const defaultRegex = /{(.*?)}/g
