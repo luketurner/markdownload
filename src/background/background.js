@@ -308,6 +308,10 @@ function textReplace(string, article, disallowedChars = null) {
     })
   }
 
+  const idRegex = /{id:?(.*)?}/g;
+  const generatedId = crypto.randomUUID().replace(/-/g, '');
+  string = string.replace(idRegex, generatedId);
+
   // if there are negative conditionals left, replace them with the no-value.
   string = string.replace(condRegexp('.*?'), function (_, _, _, ifNo) { return ifNo || ''; });
 

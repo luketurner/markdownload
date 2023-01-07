@@ -24,6 +24,7 @@
                 <li><code>{date:FORMAT}</code> - The current date and time. Check the <a href="https://momentjs.com/docs/#/displaying/format/" target="_blank" rel="noopener noreferrer">format reference</a> </li>
                 <li><code>{keywords}</code> - Meta keywords (if present). Comma separated by default.</li>
                 <li><code>{keywords:SEPARATOR}</code> - Meta keywords (if present) separated by SEPARATOR. For example, to separate by space, use <code>{keywords: }</code></li>
+                <li><code>{id}</code> - A uniquely generated ID for this capture. Each capture has a unique ID, even if capturing the same page twice. IDs are opaque alphanumeric strings.</li>
             </ul>
             There is also support for all meta tags not mentioned above, should the page you are clipping support them.
             For example, try <code>{og:image}</code> or any other widely supported meta tags
