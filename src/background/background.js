@@ -269,16 +269,20 @@ function textReplace(string, article, disallowedChars = null) {
   for (const key in article) {
     if (article.hasOwnProperty(key) && key != "content") {
       let s = (article[key] || '') + '';
-      if (s && disallowedChars) s = this.generateValidFileName(s, disallowedChars);
 
-      string = string.replace(new RegExp('{' + key + '}', 'g'), s)
-        .replace(new RegExp('{' + key + ':kebab}', 'g'), s.replace(/ /g, '-').toLowerCase())
-        .replace(new RegExp('{' + key + ':snake}', 'g'), s.replace(/ /g, '_').toLowerCase())
-        .replace(new RegExp('{' + key + ':camel}', 'g'), s.replace(/ ./g, (str) => str.trim().toUpperCase()).replace(/^./, (str) => str.toLowerCase()))
-        .replace(new RegExp('{' + key + ':pascal}', 'g'), s.replace(/ ./g, (str) => str.trim().toUpperCase()).replace(/^./, (str) => str.toUpperCase()))
-        .replace(new RegExp('{' + key + ':slug}', 'g'), s.replace(/[^\w-_]+/g, '-').toLowerCase())
-        .replace(condRegexp(key), function (_, _, ifYes, ifNo) { return (s ? ifYes : ifNo) || ''; });
-    }
+      function sanitize(v) {
+        if (v && disallowedChars) return generateValidFileName(v, disallowedChars);
+        return v;
+      }
+
+      string = string.replace(new RegExp('{' + key + '}', 'g'), sanitize(s))
+        .replace(new RegExp('{' + key + ':kebab}', 'g'), sanitize(s.replace(/ /g, '-').toLowerCase()))
+        .replace(new RegExp('{' + key + ':snake}', 'g'), sanitize(s.replace(/ /g, '_').toLowerCase()))
+        .replace(new RegExp('{' + key + ':camel}', 'g'), sanitize(s.replace(/ ./g, (str) => str.trim().toUpperCase()).replace(/^./, (str) => str.toLowerCase())))
+        .replace(new RegExp('{' + key + ':pascal}', 'g'), sanitize(s.replace(/ ./g, (str) => str.trim().toUpperCase()).replace(/^./, (str) => str.toUpperCase())))
+        .replace(new RegExp('{' + key + ':slug}', 'g'), sanitize(s.replace(/[^\w-_]+/g, '-').toLowerCase()))
+        .replace(condRegexp(key), function (_, _, ifYes, ifNo) { return sanitize(s ? ifYes : ifNo) || ''; });
+      }
   }
 
   // replace date formats
