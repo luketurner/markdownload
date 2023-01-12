@@ -22,7 +22,7 @@ I use the following configuration to capture to Dendron:
 Template for title/filename: 
 
 ```
-ref.bookmark.{hostname:slug}{pathname:?.}{pathname:slug}
+ref.bookmark.{hostname:slug}{pathname:slug:?.}{pathname:slug}
 ```
 
 Template for frontmatter:
