@@ -5,8 +5,17 @@ Currently implemented the following features on top of the base MarkDownload (fo
 1. [add `{id}` variable for per-capture unique IDs](https://github.com/luketurner/markdownload/commit/b0a1ffa80f9a053fdb02a803bc365baa3814c2b5)
 2. [add conditional substitutions in templates](https://github.com/luketurner/markdownload/commit/1f3ad36cf6ba9ccb22aea6410c02d6d193b1f943)
 3. [add `:slug` modifier for template variables](https://github.com/luketurner/markdownload/commit/918b54e6c6c9169fe3c4181614884021c51b9a43)
+4. [don't mutate the actual document](https://github.com/luketurner/markdownload/commit/542fb91a0e91f66bc084252e0e59c42710f5bd3a)
 
-All features intended to simplify [Dendron](https://www.dendron.so/) compatibility, so I can capture new notes with valid frontmatter without running them through Dendron's doctoring.
+Commit (1) above is used to generate valid IDs in Dendron frontmatter. This allows MarkDownload documents to be valid Dendron notes when using the right settings (see below).
+
+Commits (2) and (3) add flexibility for generated filenames, which helps because Dendron expects a specific format (e.g. `foo.bar.baz.md`). With these two, it's possible to convert a URL (e.g. `https://example.com/foo/bar`) into a filename like `ref.bookmarks.example-com.foo-bar` (see settings below).
+
+Note commits (2) and (3) not _required_ to generate valid Dendron notes, just to make the filename formatting nicer.
+
+Commit (4) fixes a strange issue I encountered with MarkDownload mutating the live DOM of the captured page. For whatever reason this only seems to materialize when running MarkDownload as a temporary extension via `about:debugging`. See commit message for details.
+
+## Settings for Dendron Compat
 
 I use the following configuration to capture to Dendron:
 
