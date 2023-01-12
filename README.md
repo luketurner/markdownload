@@ -44,6 +44,19 @@ desc: """
 
 I create a new Dendron vault in `/home/luke/Dendron/bookmarks` and create a link to that directory in `/home/luke/Downloads/`. Then I set the folder inside Downloads to `bookmarks`.
 
+## Installation and Usage
+
+This forked variant is not available in the official addon directory; if you want to use it, you need to:
+
+1. Clone this repository
+2. Open `about:debugging` in Firefox and load the `src` directory as a temporary extension.
+
+I might try to get these commits merged upstream, but at the moment I'm satisfied with using a separate fork.
+
+---
+
+Original README:
+
 # MarkDownload - Markdown Web Clipper
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/deathau/markdownload?style=for-the-badge&sort=semver)](https://github.com/deathau/markdownload/releases/latest)
