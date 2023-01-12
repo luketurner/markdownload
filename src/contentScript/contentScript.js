@@ -4,18 +4,24 @@ function notifyExtension() {
 }
 
 function getHTMLOfDocument() {
+
+    // Create fragment to mutate without mutating the actual document
+    // TODO -- is there a more efficient way to do this? Is deep clone required?
+    let mutableDocument = new DocumentFragment();
+    mutableDocument.append(document.documentElement.cloneNode(true));
+
     // if the document doesn't have a "base" element make one
     // this allows the DOM parser in future steps to fix relative uris
     let baseEl = document.createElement('base');
 
     // check for a existing base elements
-    let baseEls = document.head.getElementsByTagName('base');
+    let baseEls = mutableDocument.querySelector('head').getElementsByTagName('base');
     if (baseEls.length > 0) {
         baseEl = baseEls[0];
     }
     // if we don't find one, append this new one.
     else {
-        document.head.append(baseEl);
+        mutableDocument.querySelector('head').append(baseEl);
     }
 
     // if the base element doesn't have a href, use the current location
@@ -24,11 +30,10 @@ function getHTMLOfDocument() {
     }
     
     // remove the hidden content from the page
-
-    removeHiddenNodes(document.body);
+    removeHiddenNodes(mutableDocument.querySelector('body'));
     
     // get the content of the page as a string
-    return document.documentElement.outerHTML;
+    return mutableDocument.firstChild.outerHTML;
 }
 
 // code taken from here: https://www.reddit.com/r/javascript/comments/27bcao/anyone_have_a_method_for_finding_all_the_hidden/
