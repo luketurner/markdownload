@@ -264,25 +264,41 @@ function condRegexp(key) {
   return new RegExp('{(' + key + '):\\?(.*?)(?:!(.*?))?}', 'g');
 }
 
+const textReplacementModifiers = {
+  kebab: s => s.replace(/ /g, '-').toLowerCase(),
+  snake: s => s.replace(/ /g, '_').toLowerCase(),
+  camel: s => s.replace(/ ./g, (str) => str.trim().toUpperCase()).replace(/^./, (str) => str.toLowerCase()),
+  pascal: s => s.replace(/ ./g, (str) => str.trim().toUpperCase()).replace(/^./, (str) => str.toUpperCase()),
+  slug: s => s.replace(/[^\w-_]+/g, '-').replace(/^-+/g, '').replace(/-+$/g, '').toLowerCase()
+}
+
 // function to replace placeholder strings with article info
 function textReplace(string, article, disallowedChars = null) {
   for (const key in article) {
     if (article.hasOwnProperty(key) && key != "content") {
       let s = (article[key] || '') + '';
 
-      function sanitize(v) {
-        if (v && disallowedChars) return generateValidFileName(v, disallowedChars);
-        return v;
-      }
+      string = string.replace(new RegExp(`{(${key}(?::[^:}]+)*)}`, 'g'), function (match, inner) {
+        const [_, ...modifiers] = inner.split(':');
+        let modifiedValue = s;
+        for (const m of modifiers) {
 
-      string = string.replace(new RegExp('{' + key + '}', 'g'), sanitize(s))
-        .replace(new RegExp('{' + key + ':kebab}', 'g'), sanitize(s.replace(/ /g, '-').toLowerCase()))
-        .replace(new RegExp('{' + key + ':snake}', 'g'), sanitize(s.replace(/ /g, '_').toLowerCase()))
-        .replace(new RegExp('{' + key + ':camel}', 'g'), sanitize(s.replace(/ ./g, (str) => str.trim().toUpperCase()).replace(/^./, (str) => str.toLowerCase())))
-        .replace(new RegExp('{' + key + ':pascal}', 'g'), sanitize(s.replace(/ ./g, (str) => str.trim().toUpperCase()).replace(/^./, (str) => str.toUpperCase())))
-        .replace(new RegExp('{' + key + ':slug}', 'g'), sanitize(s.replace(/[^\w-_]+/g, '-').toLowerCase()))
-        .replace(condRegexp(key), function (_, _, ifYes, ifNo) { return sanitize(s ? ifYes : ifNo) || ''; });
-      }
+          // negative conditional modifier
+          if (m.startsWith('!')) { modifiedValue = modifiedValue ? '' : m.substring(1); continue; }
+
+          // positive conditional modifier
+          if (m.startsWith('?')) { modifiedValue = modifiedValue ? m.substring(1) : ''; continue; }
+
+          if (textReplacementModifiers[m]) { modifiedValue = textReplacementModifiers[m](modifiedValue); continue; }
+
+          // fallback case -- cannot parse the template, so leave it in place.
+          return match;
+        }
+
+        if (modifiedValue && disallowedChars) return generateValidFileName(modifiedValue, disallowedChars);
+        return modifiedValue;
+      });
+    }
   }
 
   // replace date formats

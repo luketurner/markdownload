@@ -49,17 +49,20 @@
                     <li><code>{variable:camel}</code> - camelCase: every word capital except the first word</li>
                     <li><code>{variable:kebab}</code> - kebab-case: hyphens between words, all lowercase</li>
                     <li><code>{variable:snake}</code> - snake_case: underscores between words, all lowercase</li>
-                    <li><code>{variable:slug}</code> - Converts sequences of non-word characters to <code>-</code>. e.g. <code>https://example.com</code> would become <code>https-example-com</code>.</li>
+                    <li><code>{variable:slug}</code> - Converts sequences of non-word characters to <code>-</code>. e.g. <code>https://example.com</code> would become <code>https-example-com</code>. Any <code>-</code> characters at the beginning/end of the string are trimmed.</li>
                 </ul>
             </p>
             <p>
                 You can insert text conditionally based on whether a variable is present using the conditional syntax:
                 <ul>
                     <li><code>{variable:?YES}</code> - Insert the raw text <code>YES</code> if the variable is defined.</li>
-                    <li><code>{variable:?!NO}</code> - Insert the raw text <code>NO</code> if the variable is empty or not defined.</li>
-                    <li><code>{variable:?YES!NO}</code> - Insert the raw text <code>YES</code> if the variable is defined and <code>NO</code> if not.</li>
+                    <li><code>{variable:!NO}</code> - Insert the raw text <code>NO</code> if the variable is empty or not defined.</li>
+                    <li><code>{variable:?YES:!NO}</code> - Insert the raw text <code>YES</code> if the variable is defined and <code>NO</code> if not.</li>
                 </ul>
-                Be aware that <code>!</code> characters cannot be included in the <code>YES</code> text, and <code>}</code> characters cannot be included in either the <code>YES</code> or <code>NO</code> text.
+                Be aware that <code>:</code> and <code>}</code> characters cannot be included in either the <code>YES</code> or <code>NO</code> text.
+            </p>
+            <p>
+                Modifiers can be stacked, for example <code>{variable:slug:snake}</code> will convert the variable to a slug, and then convert the slug to snake-case.
             </p>
         </small>
     </details>
