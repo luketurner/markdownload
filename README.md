@@ -6,14 +6,18 @@ Currently implemented the following features on top of the base MarkDownload (fo
 2. [add conditional substitutions in templates](https://github.com/luketurner/markdownload/commit/1f3ad36cf6ba9ccb22aea6410c02d6d193b1f943)
 3. [add `:slug` modifier for template variables](https://github.com/luketurner/markdownload/commit/918b54e6c6c9169fe3c4181614884021c51b9a43)
 4. [don't mutate the actual document](https://github.com/luketurner/markdownload/commit/542fb91a0e91f66bc084252e0e59c42710f5bd3a)
+5. [transform template values before sanitizing](https://github.com/luketurner/markdownload/commit/9dba149885ec8e0301f98d1a1dea53ae9706b961)
+6. [rewrite textReplace to support stacking modifiers](https://github.com/luketurner/markdownload/commit/453a8333c4aa1ff54070fc84cc34e3d85e5b9413)
 
 Commit (1) above is used to generate valid IDs in Dendron frontmatter. This allows MarkDownload documents to be valid Dendron notes when using the right settings (see below).
 
-Commits (2) and (3) add flexibility for generated filenames, which helps because Dendron expects a specific format (e.g. `foo.bar.baz.md`). With these two, it's possible to convert a URL (e.g. `https://example.com/foo/bar`) into a filename like `ref.bookmarks.example-com.foo-bar` (see settings below).
-
-Note commits (2) and (3) not _required_ to generate valid Dendron notes, just to make the filename formatting nicer.
+Commits (2) and (3) add flexibility for generated filenames, which helps because Dendron expects a specific format (e.g. `foo.bar.baz.md`). With these two, it's possible to convert a URL (e.g. `https://example.com/foo/bar`) into a filename like `ref.bookmarks.example-com.foo-bar` (see settings below). Note these are not _required_ to generate valid Dendron notes, just to make the filename formatting nicer.
 
 Commit (4) fixes a strange issue I encountered with MarkDownload mutating the live DOM of the captured page. For whatever reason this only seems to materialize when running MarkDownload as a temporary extension via `about:debugging`. See commit message for details.
+
+Commit (5) adjusts how value sanitization is performed. This didn't really matter until the `:slug` modifier was added, but sanitization should happen _after_ modifiers are applied, not before.
+
+Commit (6) introduces the ability to nest modifiers, e.g. `{variable:slug:snake}` will apply the `:slug` modifier and then the `:snake` modifier in that order. This commit also slightly changes the `:slug`, `:?foo` and `:!foo` modifiers' behavior slightly for consistency when nested.
 
 ## Settings for Dendron Compat
 
